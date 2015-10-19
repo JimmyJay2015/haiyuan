@@ -1,0 +1,94 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>管理系统登录</title>
+	<script type="text/javascript" src="/static/res/js/md5.js"></script>	
+	
+<style>   
+.header {
+padding: 2%;
+text-align: center;
+background-color: #f0f0f0;
+}
+
+.form-signin {
+max-width: 260px;
+margin-top: 100px;
+padding: 19px 29px 29px;
+margin: 80px auto 20px;
+background-color: #fff;
+background-position: center left;
+border: 1px solid #e5e5e5;
+position: absolute; left:40%; top:30%;
+
+}
+   
+</style>
+    
+{% end %}
+
+        
+{% block content %}
+	<div class="header">  
+	</div>
+	<img src="/static/images/login.jpg"></img>
+    <div class="form">
+		<form class="form-signin" >
+			<h4 class="form-signin-heading">登录密信OSS管理系统</h4>
+	
+			<input class="input-block-level" placeholder="username" name="UserLogin[username]" id="username" type="text" />	
+			<input class="input-block-level" placeholder="Password" name="UserLogin[password]" id="password" type="password" />
+			
+			<button class="btn btn-primary" type="button" id="submit" >	登录</button>
+		</form>
+	</div>
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+<script type="text/javascript">
+	$("#submit").click(function(t) {
+		var username = $.trim($("#username").val());
+		var password = $.trim($("#password").val());
+		
+		if(username.length==0){
+			setAlert(2, '用户名不能为空');
+			return;
+		}
+		
+		if(password.length==0){
+			setAlert(3, '密码不能为空');
+			return;
+		}
+		
+		//使用MD5处理，简单防范
+		password = CryptoJS.MD5(password).toString();		
+		
+		$.ajax({
+			type : "POST",
+			'url' : '/oss/login',
+			'data' : {				
+				'username' : username,
+				'password' : password,
+			},			
+			'success' : function(e) {
+				if (e.return_code == 0) {					
+					location.href = e.next;
+				} else {					
+					setAlert(e.return_code, "登录失败:"+e.description);
+				}
+			},
+			'error' : function(e){
+				setAlert(1, "发送异常，请稍后重试");
+			},
+			'dataType' : 'json',
+		});
+		
+	});
+	
+</script>       
+{% end %}
+
+ 
+  

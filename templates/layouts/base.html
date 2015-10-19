@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+    
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="/static/res/bootstrap/css/bootstrap.css" />
+
+<link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
+
+<script type="text/javascript" src="/static/res/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/res/bootstrap/js/bootstrap.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/static/res/jquery_ui/jquery-ui.min.css" />
+
+<script type="text/javascript" src="/static/res/jquery_ui/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="/static/res/js/jquery.tmpl.js"></script>
+<script type="text/javascript" src="/static/res/js/jquery.json.min.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+
+<style>
+body {
+		padding-top: 42px;
+		padding-bottom: 40px;
+	}
+	
+.footer{
+		text-align: center;
+		padding: 30px 0;
+		margin-top: 70px;
+		border-top: 1px solid #E5E5E5;
+		background-color: whiteSmoke;	
+	}
+</style>
+
+{% block header %} 
+
+{% end %}
+
+</head>
+
+<body>
+    
+    	<div class="container">
+    	
+    	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner"><div class="container">
+			<a href="javascript:;" class="brand">密信运维管理系统</a>
+			<div class="nav-collapse" id="collapse_0">
+				<ul class="nav">
+					<li><a href="/oss/enterprise_device/list">设备管理</a></li>
+					<li><a href="/oss/user_management/list">用户管理</a></li>
+				</ul>
+				<ul class="pull-right nav" >
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">当前管理用户 <span class="caret"></span></a>
+					<ul class="dropdown-menu">					
+					<li><a tabindex="-1" href="javascipt:;">修改</a></li>					
+					<li><a tabindex="-1" href="/oss/logout">注销</a></li>
+					</ul>
+					</li>
+				</ul>
+			</div>
+		</div></div>
+		</div>
+	
+    		{% block content %}{% end %}
+    	</div>    
+        
+        {% block footer %} {% end %}
+        
+</body>
+</html>

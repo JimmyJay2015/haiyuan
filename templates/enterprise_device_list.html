@@ -1,0 +1,118 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>企业设备管理</title>
+	<link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+
+	<script type="text/javascript" src="/static/res/js/pagination.js"></script>	
+	
+    
+{% end %}
+
+        
+{% block content %}
+	<div class="containerBox">
+	<div class="boxHeader">
+		<h2>设备列表</h2>
+	</div>
+	<div class="content">
+	</div> 
+	<div class="sideBar">
+	</div>
+	<div class="clr"></div>
+</div>
+
+{% raw 
+'''
+<script id="tDeviceTable" type="text/x-jquery-tmpl">
+<div class="clr"></div>
+<div id="" class="grid-view" style="padding-top: 10px;">
+<table class="items table table-bordered" id="device_table">
+<thead>
+<tr>
+<th id="">ID</th>
+<th id="">设备序列号</th>
+<th id="">设备类型</th>
+<th id="">设备形态</th>
+<th id="">绑定用户</th>
+<th id="">绑定日期</th>
+<th id="">出厂日期</th>
+<th id="">操作</th>
+</tr>
+</thead>
+<tbody id="msgBody">
+{{tmpl(deviceList) "#tDeviceItem"}}
+</tbody>
+</table>
+</div>
+<div id='device_pagination' class='pager right'></div>
+</script>
+
+
+<script id="tDeviceItem" type="text/x-jquery-tmpl">
+<tr>
+<td>${id}</td>
+<td>${device_serial_no}</td>
+<td>${device_type}</td>
+<td>${displayDeviceInterfaceType(interface_type)}</td>
+<td>${username}</td>
+<td>{{if bindtime!=0}}${displayTime(bindtime*1000,"yyyy-MM-dd")}{{/if}}</td>
+<td>{{if publishtime!=0}}${displayTime(publishtime*1000,"yyyy-MM-dd")}{{/if}}</td>
+<td class="button-column">
+<a class="update" rel="tooltip" href="${edit_url}?device_id=${id}" data-original-title="修改"><i class="icon-pencil"></i></a> 
+<a class="delete" rel="tooltip" href="javascript:;" data-original-title="删除" data-mid="${id}"><i class="icon-trash"></i></a>
+</td>
+</tr>
+</script>
+
+<script type="text/javascript">
+	var catalogList = [{
+				'_id' : 'devicermanagement',
+				'title' :"设备列表",
+				'selected' : 'selected',
+				'link' : '' ,
+		},	
+		{
+				'_id' : 'adddevice',
+				'title' : "添加设备",
+				'link' : '/oss/enterprise_device/add',
+		},   
+        {
+                '_id' : 'importdevice',
+                'title' : "导入",
+                'link' : '/oss/enterprise_device/import_task_catalog',
+        },  
+        {
+                '_id' : 'exportdevice',
+                'title' : "导出",
+                'link' : '/oss/enterprise_device/export_catalog',
+        },]
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+<script type="text/javascript">	
+	var deviceList = {% raw device_list %};
+	var count = {{ count }};
+	var num_per_page = {{ num_per_page }};
+	var current_page = {{ current_page }};
+	
+	var url_base = '/oss/enterprise_device/list';
+	var edit_url = '/oss/enterprise_device/mod';
+	var delete_device_url = '/oss/enterprise_device/delete';
+	
+</script>
+
+<script type="text/javascript" src="/static/js/list_enterprise_device.js"></script>
+
+        
+{% end %}
+
+

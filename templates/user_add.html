@@ -1,0 +1,113 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>用户管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+    <script type="text/javascript" src="/static/res/js/pagination.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/static/res/multiselect/jquery.multiselect.css" />
+    <script type="text/javascript" src="/static/res/multiselect/jquery.multiselect.js"></script>        
+    
+{% end %}
+
+        
+{% block content %}
+    <div class="containerBox">
+    <div class="boxHeader">
+        <h2>添加用户</h2>
+    </div>
+    <div class="content">
+        
+    </div> 
+    <div class="sideBar">
+    </div>
+    <div class="clr"></div>
+</div>
+
+<script id="tAddUser" type="text/x-jquery-tmpl">
+    <div class="form-horizontal " id="addUser">
+    
+    <div class="control-group ">
+        <label class="control-label">用户名</label>
+        <div class="controls">
+            <span style="margin-left: -10px;color: gray;">u</span>
+            <input id="user_username" type="text" />
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">昵称</label>
+        <div class="controls">
+            <input id="user_name" type="text" />
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">密码</label>
+        <div class="controls">
+            <input id="user_password_1" type="password" />
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">确认密码</label>
+        <div class="controls">
+            <input id="user_password_2" type="password" />
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">性别</label>
+        <div class="controls">
+            <select disabled  id="user_sex" >
+                <option value="man" selected="selected">男</option>
+                <option value="woman">女</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="cLineB" ></div>
+    <div class="cLine" style="margin-left:auto; margin-right:auto; margin-top:20px; width: 100px">
+        <a class="btnGray" href="javascript:;" id="user_add_submit" >提交</a>
+    </div>
+</script>
+
+
+
+
+{% raw 
+'''
+<script type="text/javascript">
+    var catalogList = [{
+                '_id' : 'usermanagement',
+                'title' :"用户列表",
+                'link' : '/oss/user_management/list' ,
+        },  
+        {
+                '_id' : 'adduser',
+                'title' : "添加用户",
+                'selected' : 'selected',
+                'link' : '',
+        },]
+    
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+    <script type="text/javascript"> 
+        var addUserUrl = '/oss/user_management/add';
+        var showUserUrl = '/oss/user_management/list';
+    </script>
+    
+    <script type="text/javascript" src="/static/js/user_add.js"></script>
+
+{% end %}
+
+

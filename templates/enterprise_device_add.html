@@ -1,0 +1,110 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="/static/res/jquery_ui/jquery-ui.min.css" />
+
+<script type="text/javascript" src="/static/res/jquery_ui/jquery-ui.min.js"></script>
+
+    <title>企业设备管理</title>
+    
+{% end %}
+
+        
+{% block content %}
+	<div class="containerBox">
+	<div class="boxHeader">
+		<h2>设备列表</h2>
+	</div>
+	<div class="content">
+	</div> 
+	<div class="sideBar">
+	</div>
+	<div class="clr"></div>
+</div>
+
+{% raw 
+'''
+<script id="tDeviceEdit" type="text/x-jquery-tmpl">
+<div class="form-horizontal " id="deviceEditItem">
+
+<div class="control-group "><label class="control-label">设备序列号</label>
+<div class="controls">
+<input id="device_serial_no" type="text" />
+</div></div>
+
+<div class="control-group "><label class="control-label">设备类型</label>
+<div class="controls">
+<input id="device_type" type="text" />
+</div></div>
+
+<div class="control-group "><label class="control-label">设备形态</label>
+<div class="controls">
+<select id="interface_type" >
+{{each(i,value) interface_type_list}}
+<option value="${value}">
+${displayDeviceInterfaceType(value)}
+</option>
+{{/each}}
+</select>
+</div></div>
+
+<div class="control-group "><label class="control-label">出厂时间</label>
+<div class="controls">
+<input id="publishtime" type="text" />
+</div></div>
+
+
+
+<div class="cLineB" ></div>
+<div class="cLine" style="margin-left:auto; margin-right:auto; margin-top:20px; width: 100px">
+<a class="btnGray" href="javascript:;" id="save" >保存</a>
+</div>
+</script>
+
+<script type="text/javascript">
+	var catalogList = [{
+				'_id' : 'devicermanagement',
+				'title' :"设备列表",
+				'link' : '/oss/enterprise_device/list',				
+		},	
+		{
+				'_id' : 'adddevice',
+				'title' : "添加设备",
+				'selected' : 'selected',
+				'link' : '' ,
+				
+		},  
+        {
+                '_id' : 'importdevice',
+                'title' : "导入",
+                'link' : '/oss/enterprise_device/import_task_catalog',
+        },  
+        {
+                '_id' : 'exportdevice',
+                'title' : "导出",
+                'link' : '/oss/enterprise_device/export_catalog',
+        },]
+	
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+<script type="text/javascript">	
+	var interface_type_list = ['TF', 'USB', 'BLUETOOTH'];
+	var saveUrl = '/oss/enterprise_device/add';
+	var showUrl = '/oss/enterprise_device/list';
+	
+</script>
+
+<script type="text/javascript" src="/static/js/add_enterprise_device.js"></script>
+       
+{% end %}
+
+

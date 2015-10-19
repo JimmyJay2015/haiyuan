@@ -1,0 +1,57 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>用户管理</title>
+	<link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+	<script type="text/javascript" src="/static/res/js/pagination.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="/static/res/multiselect/jquery.multiselect.css" />
+	<script type="text/javascript" src="/static/res/multiselect/jquery.multiselect.js"></script>		
+	
+{% end %}
+
+        
+{% block content %}
+	<div class="containerBox">
+	<div class="boxHeader">
+		<h2>用户列表</h2>
+	</div>
+	<div class="content">
+	<a id="userfilter" class="btnGray" href="javascript:;">用户筛选</a>
+	</div> 
+	<div class="sideBar">
+	</div>
+	<div class="clr"></div>
+</div>
+
+{% module Template('_user_table.html', user_list=user_list, current_page=current_page, count=count, num_per_page=num_per_page, initfilter=initfilter, page_url_base=page_url_base) %}
+
+{% raw 
+'''
+<script type="text/javascript">
+	var catalogList = [{
+				'_id' : 'usermanagement',
+				'title' :"用户列表",
+				'selected' : 'selected',
+				'link' : '' ,
+		},	
+		{
+				'_id' : 'adduser',
+				'title' : "添加用户",
+				'link' : '/oss/user_management/add',
+		},]
+	
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+       
+{% end %}
+
+

@@ -1,0 +1,44 @@
+{% raw 
+'''
+<script id="tCommonCatalogList" type="text/x-jquery-tmpl">    
+<div class="catalogList">
+<ul>
+{{tmpl(catalogList) "#tCommonCatalogItem"}}        
+</ul>
+</div>    
+</script>
+
+<script id="tCommonCatalogItem" type="text/x-jquery-tmpl">
+<li 
+{{if (id)}}
+id="${id}" 
+{{/if}} 
+class="
+{{if $data.hasOwnProperty('selected')}}
+selected
+{{/if}}
+ ${className}" >
+{{if link}}
+<a href="${link}">${title}
+{{if $data.hasOwnProperty('num')}}
+(${num})
+{{/if}}
+</a>
+{{else}}
+<span>
+${title}
+{{if $data.hasOwnProperty('num')}}
+(${num})
+{{/if}}
+</span>
+{{/if}}
+</li>
+</script>		
+
+<script type="text/javascript">
+		$(function(){	
+			$("#tCommonCatalogList").tmpl().appendTo( ".sideBar" );
+		});
+</script>
+'''
+ %}		

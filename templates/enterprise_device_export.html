@@ -1,0 +1,123 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>企业设备管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+
+    <script type="text/javascript" src="/static/res/js/pagination.js"></script>
+    <script type="text/javascript" src="/static/res/js/jquery.blockUI.min.js"></script>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/static/css/export.css" />    
+{% end %}
+
+        
+{% block content %}
+    <div class="containerBox">
+    <div class="boxHeader">
+        <h2>导出</h2>
+    </div>
+    <div class="content">
+    </div> 
+    <div class="sideBar">
+    </div>
+    <div class="clr"></div>
+</div>
+
+{% raw 
+'''
+<script id="tDeviceEdit" type="text/x-jquery-tmpl">
+<div>
+ 
+    <div class = "export_tab_filter_exportbutton">
+        <button class="btn btn-primary" onclick="exportDevice()" type="button">导出数据</button>
+    </div>
+    <div style="height:480px;">
+        <table class="items table table-bordered"  id="device_table">
+            <thead>
+                <tr>
+                <th id="">文件名</th>
+                <th id="">操作者</th>
+                <th id="">导出时间</th>
+                <th id="">操作</th>
+                </tr>
+            </thead>
+            <tbody id="msgBody">
+                {{tmpl(export_file_list) "#tExportFileItem"}}
+            </tbody>
+        </table>
+    </div>
+    
+    <div id='export_file_pagination' class='pager right'></div>
+</div>
+</script>
+
+<script id="tExportFileItem" type="text/x-jquery-tmpl">
+<tr>
+<td>${filename}</td>
+<td>${exporuser}</td>
+<td>{{if exporttime!=0}}${displayTime(exporttime*1000,"yyyy-MM-dd hh:mm:ss")}{{/if}}</td>
+<td class="button-column">
+<a class="update" href="${exportfilePath}${filename}"  title="下载"><i class="icon-download-alt"></i></a> 
+<a class="delete" href="javascript:;" title="删除"  data-filename="${filename}"><i class="icon-trash"></i></a>
+</td>
+</tr>
+</script>
+
+<script type="text/javascript">
+    var catalogList = [{
+                '_id' : 'devicermanagement',
+                'title' :"设备列表",
+                'link' : '/oss/enterprise_device/list',
+        },  
+        {
+                '_id' : 'adddevice',
+                'title' : "添加设备",
+                'link' : '/oss/enterprise_device/add' ,
+                
+        },  
+        {
+                '_id' : 'importdevice',
+                'title' : "导入",
+                'link' : '/oss/enterprise_device/import_task_catalog',
+        },  
+        {
+                '_id' : 'exportdevice',
+                'title' : "导出",
+                'selected' : 'selected',
+                'link' : '',
+        },]
+    
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+<script type="text/javascript"> 
+    var interface_type_list = ['TF', 'USB', 'BLUETOOTH'];
+    var saveUrl = '/oss/enterprise_device/add';
+    var showUrl = '/oss/enterprise_device/list';
+    
+    
+    var url_base = '/oss/enterprise_device/export_catalog';
+    var export_file_list = {% raw export_file_list %};
+    var count = {{ count }};
+    var num_per_page = {{ num_per_page }};
+    var current_page = {{ current_page }};
+    
+    var exportfilePath = '/static/export/';
+    var exportUrl = '/oss/enterprise_device/export_file'
+    var deleteExportfileUrl = '/oss/enterprise_device/export_delete_file';
+</script>
+
+<script type="text/javascript" src="/static/js/export_enterprise_device.js"></script>
+       
+{% end %}
+
+

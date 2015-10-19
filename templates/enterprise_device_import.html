@@ -1,0 +1,248 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>企业设备管理</title>
+    
+    <link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/import.css" />
+
+    <script type="text/javascript" src="/static/res/js/pagination.js"></script>
+    
+    
+    <link href="/static/res/uploadify/uploadify.css" rel="stylesheet" type="text/css" />
+    <script src="/static/res/uploadify/jquery.uploadify.js" type="text/javascript"></script>
+    
+{% end %}
+
+        
+{% block content %}
+    <div class="containerBox">
+    <div class="boxHeader">
+        <h2>导入</h2>
+    </div>
+    <div class="content">
+    </div> 
+    <div class="sideBar">
+    </div>
+    <div class="clr"></div>
+</div>
+
+{% raw 
+'''
+<script id="tDeviceEdit" type="text/x-jquery-tmpl">
+    
+    <ul class="nav nav-tabs">
+        <li id = "import_task_li" ><a href="/oss/enterprise_device/import_task_catalog" id = "import_task" >导入任务</a></li>
+        <li id = "import_result_li"><a href="/oss/enterprise_device/import_info_catalog" id = "import_result" >导入结果</a></li>
+    </ul>
+    
+    <div id = "import_task_content">
+    </div>
+    
+</script>
+
+<script id = "tImport_Task" type="text/x-jquery-tmpl">
+<div id = "Import_Task">
+    <div>
+        <table class="table table-bordered" id = "import_task_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>文件名</th>
+                    <th>状态</th>
+                    <th>上传时间</th>
+                    <th>进度</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="Import_Task_Body" >
+            </tbody>
+        </table>
+        
+        <div id='import_task_pagination' class='pager right'></div>
+    </div>
+    <div style="margin-top: 80px;"><input id="file_upload" name="file_upload" type="file" multiple="false" /></div>
+</div>
+</script>
+
+<script id = "tImport_Task_item" type="text/x-jquery-tmpl">
+<tr>
+    <td>${id}</td>
+    <td>${file_name}</td>
+    <td  
+        {{if task_status == 'running'}}
+            style="background-color: lightsalmon;color: white;"
+        {{else task_status == 'upload'}}
+            style="background-color: lightseagreen;color: white;"            
+        {{else task_status == 'finish'}}
+            style="background-color: grey;color: white;"
+        {{else}}
+        
+        {{/if}}>
+        ${task_status}
+    </td>
+        
+    <td>${displayTime(upload_time*1000,"yyyy-MM-dd hh:mm:ss")}</td>
+    
+    <td>
+        {{if task_status == 'upload'}}
+            
+        {{else}}
+            总数:${total_item}
+        <br />
+            已完成:${finish_item}
+        <br />
+            已失败:${failed_item}
+        {{/if}}
+    </td>
+    
+    <td>
+        {{if task_status == 'running'}}
+            
+        {{else task_status == 'upload'}}
+            <a class="exec_import" href="javascript:;" title="导入" data-taskname="${task_name}" >
+                <i class="icon-circle-arrow-up"></i>
+            </a>
+            <a class="delete_task" href="javascript:;" title="删除任务" data-taskname="${task_name}" >
+                <i class="icon-trash"></i>
+            </a>
+        {{else task_status == 'finish'}}
+            <a class="delete_task" href="javascript:;" title="删除任务" data-taskname="${task_name}" >
+                <i class="icon-trash"></i>
+            </a>
+        {{else}}
+        
+        {{/if}}
+    </td>
+</tr>
+</script>
+
+<script id = "tImport_Info" type="text/x-jquery-tmpl">
+<div id = "Import_Info">
+    <table class="table table-bordered" id = "import_info_table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>任务ID</th>
+                <th>文件名</th>
+                <th>完成时间</th>
+                <th>总数</th>
+                <th>失败数</th>
+                <th style = "width: 100px;">失败详情</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="Import_Info_Body">
+        </tbody>
+    </table>
+    
+    
+    <div id='import_info_pagination' class='pager right'></div>
+</div>
+</script>
+
+<script id = "tImport_Info_Item" type="text/x-jquery-tmpl">
+<tr>
+    <td>${id}</td>
+    <td>${import_task_id}</td>
+    <td>${file_name}</td>
+    
+    {{if finish_time == 0}}
+        <td>0</td>
+    {{else}}
+        <td>${displayTime(finish_time*1000,"yyyy-MM-dd hh:mm:ss")}</td>
+    {{/if}}
+    <td>${total_item}</td>
+    <td>${failed_item}</td>
+    <td>${failed_info}</td>
+    <td><a class="delete_info" href="javascript:;" title="删除记录" data-taskname="${task_name}" ><i class="icon-trash"></i></a></td>
+</tr>
+</script>
+
+
+
+<script id = "tFailed_Info" type="text/x-jquery-tmpl">
+    <div id = "Failed_Info">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style = "width:50px;">文件名</th>
+                    <th>失败数据行</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{each failed_info}}
+                    <tr>
+                        <td>${fileName}</td>
+                        <td>
+                            {{each failedLines}}
+                                ${$value}、
+                            {{/each}}
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var catalogList = [{
+                '_id' : 'devicermanagement',
+                'title' :"设备列表",
+                'link' : '/oss/enterprise_device/list',
+        },  
+        {
+                '_id' : 'adddevice',
+                'title' : "添加设备",
+                'link' : '/oss/enterprise_device/add' ,
+                
+        }, 
+        {
+                '_id' : 'importdevice',
+                'title' : "导入",
+                'selected' : 'selected',
+                'link' : '',
+        },  
+        {
+                '_id' : 'exportdevice',
+                'title' : "导出",
+                'link' : '/oss/enterprise_device/export_catalog',
+        },]
+    
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+{% end %}
+
+{% block footer %}
+    {% include "layouts/footer.html" %}
+
+<script type="text/javascript">
+ 
+    var catalog_type = "{{ catalog_type }}"
+    var data_list = {% raw data_list %};
+    
+    var count = {{ count }};
+    var num_per_page = {{ num_per_page }};
+    var current_page = {{ current_page }};
+    
+    
+    var task_base_url ="/oss/enterprise_device/import_task_catalog";
+    var info_base_url ="/oss/enterprise_device/import_info_catalog";
+    
+    var exec_import_url = "/oss/enterprise_device/import_start_task";
+    
+    var delete_task_url = "/oss/enterprise_device/import_delete_task"
+    var delete_info_url = "/oss/enterprise_device/import_delete_info"
+    
+</script>
+
+<script type="text/javascript" src="/static/js/import_enterprise_device.js"></script>
+       
+{% end %}
+
+

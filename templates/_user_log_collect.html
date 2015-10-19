@@ -1,0 +1,144 @@
+{% extends  "layouts/base.html" %}
+
+{% block header %}
+    <title>用户管理</title>
+    <link rel="stylesheet" type="text/css" href="/static/res/css/pagination.css" />
+    <script type="text/javascript" src="/static/res/js/pagination.js"></script>
+    
+{% end %}
+
+        
+{% block content %}
+    <div class="containerBox">
+    <div class="boxHeader">
+        <h2>用户  {{username}}</h2>
+    </div>
+    <div class="content">
+        
+    </div> 
+    <div class="sideBar">
+    </div>
+    <div class="clr"></div>
+</div>
+
+{% raw 
+'''
+<script id="tUserLogCollect" type="text/x-jquery-tmpl">
+<div class="form-horizontal " id="userLogCollect">
+    <div>
+        <table class="items table table-bordered"  id="collect_task_table">
+            <thead>
+                <tr>
+                <th id="">用户名</th>
+                <th id="">采集开始点</th>
+                <th id="">采集结束点</th>
+                <th id="">完成时间</th>
+                <th id="">状态</th>
+                <th id="">操作</th>
+                </tr>
+            </thead>
+            <tbody id="msgBody">
+                {{tmpl(task_list) "#tLogCollectedItem"}}
+            </tbody>
+        </table>
+    </div>
+    
+    <div id='collect_task_pagination' class='pager right'></div>
+    
+    <div class="cLine"></div>
+    
+    <div class="control-group ">
+        <label class="control-label">开始时间</label>
+        <div class="controls">
+            <input id="log_start_time" type="text" />
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">结束时间</label>
+        <div class="controls">
+            <input id="log_end_time" type="text" />
+            <p style="color: gray;font-size: small;" >日期格式为24小时，YY-MM-DD HH:MM:SS</p>
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startCollect()" type="button">开始采集</button>
+        </div>
+    </div>
+    
+</div>
+</script>
+
+<script id="tLogCollectedItem" type="text/x-jquery-tmpl">
+<tr>
+<td>${username}</td>
+<td>${start_time}</td>
+<td>${end_time}</td>
+<td>${finish_time}</td>
+<td>${translateStatus(status)}</td>
+
+<td class="button-column">
+{{if status.toLowerCase() == 'stop'}}
+    <a class="update" href="${logurl}"  title="下载"><i class="icon-download-alt"></i></a>
+{{else status.toLowerCase() == 'ready'}}
+    <a class="reCollect" href="javascript:;"  title="重新采集" data-id = ${id}><i class="icon-book"></i></a>
+{{/if}}
+</td>
+</tr>
+</script>
+
+
+
+<script type="text/javascript">
+    var catalogList = [
+        {
+                '_id' : 'moduser',
+                'selected' : 'selected',
+                'title' :"用户日志采集",
+                'link' : '' ,
+        },
+        {
+                '_id' : 'usermanagement',
+                'title' :"用户列表",
+                'link' : '/oss/user_management/list' ,
+        },  
+        {
+                '_id' : 'adduser',
+                'title' : "添加用户",
+                'link' : '/oss/user_management/add',
+        },]
+</script>
+'''
+%}
+
+{% module Template('layouts/catalog_list.html') %}
+
+
+
+
+{% end %}
+
+{% block footer %}
+
+<script type="text/javascript">
+    var task_list = {% raw task_list %};
+    var count = {{ count }};
+    var num_per_page = {{ num_per_page }};
+    var current_page = {{ current_page }};
+    var username = '{{username}}';
+    
+    var url_base = '/oss/log/collect';
+    var start_collect= '/oss/log/collect';
+    var restart_collect= '/oss/log/collect_restart';
+    
+</script>
+    
+    <script type="text/javascript" src="/static/js/_user_log_collect.js"></script>
+
+    {% include "layouts/footer.html" %}
+
+{% end %}
+
+

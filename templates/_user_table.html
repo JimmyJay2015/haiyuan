@@ -1,0 +1,248 @@
+{% raw 
+'''
+<script id="tUserTable" type="text/x-jquery-tmpl">
+<div class="clr"></div>
+<div id="" class="grid-view" style="padding-top: 10px;">
+<table class="items table table-bordered" id="user_table">
+<thead>
+<tr>
+<th id="">用户名</th>
+<th id="">在线</th>
+<th id="">绑定状态</th>
+<th id="">昵称</th>
+<th id="">性别</th>
+<th id="">头像</th>
+<th id="">地区</th>
+<th id="">创建日期</th>
+<th id="">操作</th>
+</tr>
+</thead>
+<tbody id="msgBody">
+{{tmpl(userList) "#tUserItem"}}
+</tbody>
+</table>
+</div>
+<div id='user_pagination' class='pager right'></div>
+</script>
+
+
+<script id="tUserItem" type="text/x-jquery-tmpl">
+<tr>
+<td>${username}</td>
+<td>
+{{if status=='available'}}
+<img height="20" width="20" src="/static/images/online.png" title="在线">
+{{else}}
+<img height="20" width="20" src="/static/images/offline.png" title="不在线">
+{{/if}}
+</td>
+<td>
+{{if binding=='true'}}
+绑定
+{{else}}
+未绑定
+{{/if}}
+</td>
+<td>${name}</td>
+<td>
+{{if sex=='male'}}
+男
+{{else}}
+{{if sex=='female'}}
+女
+{{/if}}
+{{/if}}
+</td>
+<td>
+{{if photo_base64.length>0}}
+<img height="48" width="48" src="data:${photo_type};base64,${photo_base64}" class="avatar right">
+{{/if}}
+</td>
+<td>${region}</td>
+<td>{{if creationdate !=0}}${displayTime(creationdate *1,"yyyy-MM-dd")}{{/if}}</td>
+<td class="button-column">
+<a class="update" href="${edit_url}?username=${username}" title="修改"><i class="icon-pencil"></i></a> 
+<a class="delete" href="javascript:;" title="删除" data-username="${username}"><i class="icon-trash"></i></a>
+<a class="collectLog" href="${collect_log_url}?username=${username}" title="采集日志" data-username="${username}"><i class="icon-book"></i></a>
+</td>
+</tr>
+</script>
+
+
+<script id="tUserFilterDialog" type="text/x-jquery-tmpl">
+<div id="user_filter_dialog" title="用户搜索" style="display:none" class="form-horizontal">
+<div class="cLine"></div>
+
+<div class="control-group cLineB">
+<label class="dib">用户搜索条件</label>
+<select id="filters"  multiple="multiple">
+{{each(i, field) filterFieldDefine}}
+<option value="${field.key}"
+	{{if initfilter!==null&&initfilter.hasOwnProperty(field.key)}}selected{{/if}} 
+	>${field.desc}	
+</option>
+{{/each}}
+
+</select>
+</div>
+
+<div id="control_username" class="control-group 
+	{{if initfilter===null||initfilter.hasOwnProperty("username")===false}}none{{else}}filterok{{/if}}">
+<label class="control-label">用户名称</label>
+<div class="controls">
+	<input id="username_filter" type="text" 
+		value="{{if initfilter!==null&&initfilter.hasOwnProperty("username")}}${initfilter.username}{{/if}}">
+</div>
+</div>
+
+<div id="control_nickname" class="control-group 
+	{{if initfilter===null||initfilter.hasOwnProperty("nickname")===false}}none{{else}}filterok{{/if}}">
+<label class="control-label">昵称</label>
+<div class="controls">
+	<input id="name_filter" type="text" 
+		value="{{if initfilter!==null&&initfilter.hasOwnProperty("nickname")}}${initfilter.nickname}{{/if}}">
+</div>
+</div>
+
+<div id="control_sex" class="control-group 
+	{{if initfilter===null||initfilter.hasOwnProperty("sex")===false}}none{{else}}filterok{{/if}}">
+<label class="control-label">性别</label>
+<div class="controls">
+<select id="sex_filter">
+{{each(i, value) ['male','female']}}
+<option value="${value}" 
+	{{if initfilter!==null&&initfilter.hasOwnProperty("sex")&&initfilter.sex==value}}selected{{/if}}>
+{{if value=='male'}}
+男
+{{else}}
+{{if value=='female'}}
+女
+{{/if}}
+{{/if}}
+</option>
+{{/each}}
+</select>
+</div>
+</div>
+
+<div id="control_region" class="control-group 
+	{{if initfilter===null||initfilter.hasOwnProperty("region")===false}}none{{else}}filterok{{/if}}">
+<label class="control-label">地区</label>
+<div class="controls">
+	<input id="region_filter" type="text" 
+		value="{{if initfilter!==null&&initfilter.hasOwnProperty("region")}}${initfilter.region}{{/if}}">	
+</div>
+</div>
+
+
+<div id="control_binding" class="control-group 
+	{{if initfilter===null||initfilter.hasOwnProperty("binding")===false}}none{{else}}filterok{{/if}}">
+<label class="control-label">绑定状态</label>
+<div class="controls">
+<select id="binding_filter">
+{{each(i, value) ['true','false']}}
+<option value="${value}" 
+	{{if initfilter!==null&&initfilter.hasOwnProperty("binding")&&initfilter.binding==value}}selected{{/if}}>
+{{if value=='true'}}
+绑定
+{{else}}
+未绑定
+{{/if}}
+</option>
+{{/each}}
+</select>
+</div>
+</div>
+
+
+<div class="cLine"></div>
+<div class="cLine"></div>
+    
+</div>
+</script>
+
+
+
+<script id="tCollectLogSetTime" type="text/x-jquery-tmpl">
+<div id="collectLogSetTime" title="采集用户日志" class="form-horizontal">
+    <div class="cLine"></div>
+    
+    <div class="control-group ">
+        <label class="control-label">用户名</label>
+        <div class="controls">
+            <input disabled="disabled" type="text" value = "${username}"/>
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">开始时间</label>
+        <div class="controls">
+            <input id="log_start_time" type="text" value="格式为 yy-mm-dd hh:mm:ss" onfocus="cls('log_start_time')" class="color:gray;"/>
+        </div>
+    </div>
+    
+    <div class="control-group ">
+        <label class="control-label">结束时间</label>
+        <div class="controls">
+            <input id="log_end_time" type="text" value="格式为 yy-mm-dd hh:mm:ss" onfocus="cls('log_end_time')" class="color:gray;"/>
+        </div>
+    </div>
+    
+    <div class="cLineB" ></div>
+        <div class="cLine" style="margin-left:auto; margin-right:auto; margin-top:20px; width: 100px">
+        <a class="btnGray" href="javascript:;" id="log_collect_submit" data-username='${username}' >提交</a>
+        
+        <a class="btnGray" href="javascript:;" id="log_collect_cancel" data-username='${username}'>取消</a>
+    </div>
+    
+
+</div>
+</script>
+'''
+%}	
+ 
+<script type="text/javascript">
+
+var edit_url = '/oss/user_management/mod';  
+var delete_user_url = '/oss/user_management/delete';
+var collect_log_url = '/oss/log/collect';
+
+//定义查询字段
+var filterFieldDefine = [
+						 {key:'username',desc:'用户名称'},
+						 {key:'nickname',desc:'昵称'}, 
+                         {key:'sex',desc:'性别'},
+                         {key:'region',desc:'地区'},                         
+                         {key:'binding',desc:'是否绑定'},                         
+                         ];
+                         
+
+var userList = {% raw user_list %};
+
+var count = {{ count }};
+var num_per_page = {{ num_per_page }};
+var current_page = {{ current_page }};
+var initfilter = {% raw initfilter %};
+var url_base = '{{ page_url_base }}';
+
+has_filter = false;
+for(filter_name in initfilter)
+{
+	if(has_filter===false){
+		url_base += "?";
+		has_filter = true;
+	}
+	url_base += filter_name;
+	url_base += "=";
+	url_base += initfilter[filter_name];
+	url_base += "&";
+} 
+
+
+</script>
+
+<script type="text/javascript" src="/static/js/_user_table.js"></script>
+
+
+
+
